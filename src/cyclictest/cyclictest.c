@@ -1177,7 +1177,7 @@ static void process_options(int argc, char *argv[], int max_cpus)
 			// 系统numa 可用返回 1； numa 不可用返回 0
 			numa = numa_initialize();
 			/*
-				optarg——指向当前选项参数（如果有）的指针。
+				optarg——指向当前选项参数（如果有）的[值]的指针。
 				optind——再次调用 getopt() 时的下一个 argv 指针的索引。
 				optopt——最后一个未知选项。
 			*/

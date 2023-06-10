@@ -1159,17 +1159,28 @@ static void process_options(int argc, char *argv[], int max_cpus)
 		// 将所有的参数都更改为短参数，逐个字符遍历参数字符列表
 		int c = getopt_long(argc, argv, "a::A::b:c:d:D:F:h:H:i:l:MNo:p:mqrRsSt::uvD:x",
 							long_options, &option_index);
-        if (c == -1)
+		if (c == -1)
 			break;
 		switch (c)
 		{
+		/*
+			参数信息为 'a' 或 OPT_AFFINITY
+			执行OPT_AFFINITY 下函数段
+		*/
 		case 'a':
 		case OPT_AFFINITY:
 			option_affinity = 1;
 			/* smp sets AFFINITY_USEALL in OPT_SMP */
+			// 如果命令行参数包含 smp， 则无法设置 affinity
 			if (smp)
 				break;
+			// 系统numa 可用返回 1； numa 不可用返回 0
 			numa = numa_initialize();
+			/*
+				optarg——指向当前选项参数（如果有）的指针。
+				optind——再次调用 getopt() 时的下一个 argv 指针的索引。
+				optopt——最后一个未知选项。
+			*/
 			if (optarg)
 			{
 				parse_cpumask(optarg, max_cpus, &affinity_mask);
@@ -2513,4 +2524,3 @@ out:
 
 	exit(ret);
 }
-

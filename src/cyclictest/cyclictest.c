@@ -1159,7 +1159,7 @@ static void process_options(int argc, char *argv[], int max_cpus)
 		// 将所有的参数都更改为短参数，逐个字符遍历参数字符列表
 		int c = getopt_long(argc, argv, "a::A::b:c:d:D:F:h:H:i:l:MNo:p:mqrRsSt::uvD:x",
 							long_options, &option_index);
-		if (c == -1)
+        if (c == -1)
 			break;
 		switch (c)
 		{

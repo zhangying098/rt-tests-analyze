@@ -1103,6 +1103,15 @@ static void process_options(int argc, char *argv[], int max_cpus)
 		 * Options for getopt
 		 * Ordered alphabetically by single letter name
 		 */
+
+		/*
+
+			struct option {const char *name; int has_arg; int *flag; int val;};
+			name:		长选项的名字
+			has_arg:	0,不需要参数；1，需要参数；2，参数是可选的
+			flag:		指定如何为长选项返回结果。如果flag是null,那么getopt_long返回val(可以将val设置为等效的短选项字符)，否则getopt_long返回0
+			val:		要返回的值
+		*/
 		static struct option long_options[] = {
 			{"affinity", optional_argument, NULL, OPT_AFFINITY},
 			{"aligned", optional_argument, NULL, OPT_ALIGNED},
@@ -1146,6 +1155,8 @@ static void process_options(int argc, char *argv[], int max_cpus)
 			{"posix_timers", no_argument, NULL, OPT_POSIX_TIMERS},
 			{NULL, 0, NULL, 0},
 		};
+
+		// 将所有的参数都更改为短参数，逐个字符遍历参数字符列表
 		int c = getopt_long(argc, argv, "a::A::b:c:d:D:F:h:H:i:l:MNo:p:mqrRsSt::uvD:x",
 							long_options, &option_index);
 		if (c == -1)
@@ -2034,11 +2045,17 @@ int main(int argc, char **argv)
 	int signum = SIGALRM;
 	int mode;
 	int cpu;
+	// CPU 核心计数：使用 libc 的 sysconf(3); _SC_NPROCESSORS_CONF（系统中的 CPU 核心数）
 	int max_cpus = sysconf(_SC_NPROCESSORS_CONF);
+	// 可以查询 _SC_NPROCESSORS_ONLN（当前可供使用的 CPU 核心数）
 	int online_cpus = sysconf(_SC_NPROCESSORS_ONLN);
 	int i, ret = -1;
 	int status;
 
+	/*
+		1、备份 argv 信息
+		2、打印执行时间戳信息
+	*/
 	rt_init(argc, argv);
 	process_options(argc, argv, max_cpus);
 
@@ -2496,3 +2513,4 @@ out:
 
 	exit(ret);
 }
+

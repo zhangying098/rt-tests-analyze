@@ -519,10 +519,27 @@ static void get_timestamp(char *tsbuf)
 	// time_t 时间表示方式，定义为从格林威治时间1970年01月01日00时00分00秒起至现在的总秒数
 	time_t t;
 
+	/*
+		#include<sys/time.h>
+		int gettimeofday(struct  timeval*tv,struct  timezone *tz )
+		说明：
+			gettimeofday()会把目前的时间用tv 结构体返回，当地时区的信息则放到tz所指的结构中
+			gettimeofday()函数中tv或者tz都可以为空。如果为空则就不返回其对应的结构体
+			函数执行成功后返回0，失败后返回-1，错误代码存于errno中
+	*/
 	gettimeofday(&tv, NULL);
 	t = tv.tv_sec;
 	tm = localtime(&t);
 	/* RFC 2822-compliant date format */
+	/*
+		https://en.cppreference.com/w/cpp/chrono/c/strftime
+
+		std::size_t strftime( char* str, std::size_t count, const char* format, const std::tm* time );
+			str		-	pointer to the first element of the char array for output
+			count	-	maximum number of bytes to write
+			format	-	pointer to a null-terminated multibyte character string specifying the format of conversion
+			time	-	pointer to the date and time information to be converted
+	*/
 	strftime(tsbuf, MAX_TS_SIZE, "%a, %d %b %Y %T %z", tm);
 }
 
@@ -568,7 +585,7 @@ void rt_init(int argc, char *argv[])
 
 		offset += len + 1;
 	}
-
+	// 打印执行时间戳信息
 	get_timestamp(ts_start);
 }
 
@@ -638,3 +655,4 @@ void rt_write_json(const char *filename, int return_code,
 	if (!filename || strcmp("-", filename))
 		fclose(f);
 }
+
